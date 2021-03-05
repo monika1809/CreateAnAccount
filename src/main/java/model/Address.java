@@ -14,10 +14,10 @@ public class Address {
     private String addressLine2;
     private String city;
     private State state;
-    private String postalCode;
+    private Integer postalCode;
     private Country country;
     private String additionalInfo;
     private String homePhone;
-    private String mobilePhone;
+    private Integer mobilePhone;
     private String addressAlias;
 }

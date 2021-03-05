@@ -5,14 +5,17 @@ import model.PersonalInformation;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import utils.ElementVisibleUtils;
+
+import java.time.Duration;
 
 public class SignInPage extends BasePage {
 
-    public SignInPage(WebDriver driver) {
-        super(driver);
-    }
+    @FindBy(className = "info-account")
+    WebElement registerInfoAccountParagraph;
+    private WebDriverWait wait;
 
     @FindBy(id = "email_create")
     WebElement inputEmail;
@@ -41,9 +44,6 @@ public class SignInPage extends BasePage {
     @FindBy(id = "years")
     WebElement year;
 
-    @FindBy(id = "company")
-    WebElement company;
-
     @FindBy(id = "address1")
     WebElement address1;
 
@@ -71,11 +71,18 @@ public class SignInPage extends BasePage {
     @FindBy(id = "submitAccount")
     WebElement registerButton;
 
+    public SignInPage(WebDriver driver) {
+        super(driver);
+        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+    }
+
     public void enterEmail(String email) {
-    inputEmail.sendKeys(email);
+        wait.until(ExpectedConditions.visibilityOf(inputEmail));
+        inputEmail.sendKeys(email);
     }
 
     public void createNewAccount() {
+        wait.until(ExpectedConditions.visibilityOf(submitEmail));
         submitEmail.click();
     }
 
@@ -83,24 +90,13 @@ public class SignInPage extends BasePage {
         registerButton.click();
     }
 
-//    public void firstNameInput(String name) {
-//        firstName.sendKeys(name);
-//    }
-
-    public void lastNameInput(String name) {
-        lastName.sendKeys(name);
-    }
-
-    public void passwordInput(String pass) {
-        password.sendKeys(pass);
-    }
-
-    public void dayInput(String dayOfBirth) {
-        day.sendKeys(dayOfBirth);
-    }
-
     private boolean isAlertBoxDisplayed(WebElement box) {
-        return ElementVisibleUtils.isElementVisible(box, wait);
+        wait.until(ExpectedConditions.visibilityOf(box));
+        return ElementVisibleUtils.isElementVisible(box);
+    }
+
+    public boolean isRegisterInfoAccountParagraphDisplayed() {
+        return isAlertBoxDisplayed(registerInfoAccountParagraph);
     }
 
     public boolean isAlertDangerBoxRegisterAccountDisplayed() {
@@ -108,6 +104,7 @@ public class SignInPage extends BasePage {
     }
 
     public void sendPersonalInformation(PersonalInformation personalInformation) {
+        wait.until(ExpectedConditions.visibilityOf(firstName));
         firstName.sendKeys(personalInformation.getFirstName());
         lastName.sendKeys(personalInformation.getLastName());
         password.sendKeys(personalInformation.getPassword());
@@ -120,9 +117,9 @@ public class SignInPage extends BasePage {
         address1.sendKeys(address.getAddressLine1());
         city.sendKeys(address.getCity());
         state.sendKeys(address.getCity());
-        postcode.sendKeys(address.getAddressLine1());
+        postcode.sendKeys(address.getPostalCode().toString());
         country.sendKeys(address.getCountry().getValue());
-        mobilePhone.sendKeys(address.getMobilePhone());
+        mobilePhone.sendKeys(address.getMobilePhone().toString());
         alias.sendKeys(address.getAddressAlias());
     }
 }
